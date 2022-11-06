@@ -23,7 +23,7 @@ restricting an HTTP API with OPA.
 
 # What happens here?
 
-![](opa/opa_flow.png)
+![](docs/opa_flow.png)
 
 On each HTTP request to the API server, 
 the API server asks the OPA server whether the requesting client
@@ -32,7 +32,7 @@ is allowed to access the document or not.
 But why does the OPA server knows who is allowed to do what?
 From the policy definition file `example-policy.rego`.
 
-![](opa/opa_build.png)
+![](docs/opa_build.png)
 
 In order to re-define what is allowed and what is forbidden,
 edit the policy and rebuild it ("Run", Step 2).
