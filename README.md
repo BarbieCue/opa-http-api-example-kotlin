@@ -5,7 +5,7 @@
 <a href="https://www.openpolicyagent.org/"><img src="docs/opa-logo.png" alt="Open Policy Agent" width="50" /></a>
 <a href="https://kotlinlang.org/"><img src="docs/kotlin-logo.png" alt="Kotlin" width="50" /></a>
 
-This is a minimalistic example of restricting an HTTP API with OPA
+A minimalistic example of restricting an HTTP API with OPA
 
 </div>
 
