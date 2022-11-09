@@ -9,6 +9,8 @@ allow {
 	input.path == ["finance", "salary", input.user]
 }
 
+# Logical OR (https://www.openpolicyagent.org/docs/latest/#logical-or)
+
 # Allow managers to get their subordinates' salaries.
 allow {
 	some username
