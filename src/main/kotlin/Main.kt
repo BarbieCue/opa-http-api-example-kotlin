@@ -16,7 +16,7 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-suspend fun main() {
+fun main() {
 
     embeddedServer(Netty, port = 8080) {
         install(Authentication) {
@@ -34,9 +34,8 @@ suspend fun main() {
                     val user = call.principal<UserIdPrincipal>()?.name
                     val method = call.request.httpMethod.value
                     val path = call.request.path()
-                    val token = call.request.queryParameters["token"]
 
-                    val isAuthorized = checkPolicy(user, method, path, token)
+                    val isAuthorized = checkPolicy(user, method, path)
 
                     if (isAuthorized)
                         call.respondText("You are authorized! :)")
@@ -58,7 +57,6 @@ data class Input(
     val user: String?,
     val method: String,
     val path: List<String>,
-    val token: String?,
 )
 
 // OPA response JSON (stripped)
@@ -71,7 +69,7 @@ data class OpaResponse(
     val result: Result
 )
 
-suspend fun checkPolicy(user: String?, method: String, path: String, token: String?): Boolean {
+private suspend fun checkPolicy(user: String?, method: String, path: String): Boolean {
     val client = HttpClient(CIO) {
         install(Logging) {
             logger = Logger.DEFAULT
@@ -86,13 +84,9 @@ suspend fun checkPolicy(user: String?, method: String, path: String, token: Stri
         }
     }
 
-    // "/httpapi/auth_example" comes from the example-policy.rego file
-    // https://www.openpolicyagent.org/docs/latest/policy-language/
-    val opaUrl = "http://localhost:8181/v1/data/httpapi/auth_example"
+    val opaData = OpaRequestBody(Input(user, method, path.removePrefix("/").split("/")))
 
-    val opaData = OpaRequestBody(Input(user, method, path.removePrefix("/").split("/"), token))
-
-    val response: OpaResponse = client.post(opaUrl) {
+    val response: OpaResponse = client.post("http://localhost:8181/v1/data/httpapi/auth_example") {
         contentType(ContentType.Application.Json)
         setBody(opaData)
     }.body()
