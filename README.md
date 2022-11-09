@@ -9,6 +9,7 @@ This is a minimalistic example of restricting an HTTP API with OPA
 
 </div>
 
+
 ## Get started
 
 1. Start the OPA server (+ bundle server)
@@ -17,6 +18,7 @@ This is a minimalistic example of restricting an HTTP API with OPA
     docker-compose up
     ``` 
 2. Start the API server (kotlin application) e.g. in IntelliJ IDEA
+
 
 ### Being the client - sample requests to the API server
 
@@ -40,6 +42,7 @@ the clients request will be processed or rejected.
 
 
 ## Policy / Bundle
+
 Why does the OPA server knows about the permissions of a client?
 From the policy!
 
