@@ -3,8 +3,6 @@ package httpapi.auth_example
 # bob is alice's manager, and betty is charlie's.
 subordinates := {"alice": [], "charlie": [], "bob": ["alice"], "betty": ["charlie"]}
 
-default allow := false
-
 # Allow users to get their own salaries.
 allow {
 	input.method == "GET"
