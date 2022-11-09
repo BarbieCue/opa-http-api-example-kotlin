@@ -61,12 +61,8 @@ data class Input(
 
 // OPA response JSON (stripped)
 @Serializable
-data class Result(
-    val allow: Boolean
-)
-@Serializable
 data class OpaResponse(
-    val result: Result
+    val result: Boolean
 )
 
 private suspend fun checkPolicy(user: String?, method: String, path: String): Boolean {
@@ -86,10 +82,13 @@ private suspend fun checkPolicy(user: String?, method: String, path: String): Bo
 
     val opaData = OpaRequestBody(Input(user, method, path.removePrefix("/").split("/")))
 
-    val response: OpaResponse = client.post("http://localhost:8181/v1/data/httpapi/auth_example") {
+    // Call the OPA Data API
+    // Concrete: Retrieving the "allow" document from the example-policy by entering values
+    // https://www.openpolicyagent.org/docs/latest/rest-api/#get-a-document-with-input
+    val response: OpaResponse = client.post("http://localhost:8181/v1/data/httpapi/auth_example/allow") {
         contentType(ContentType.Application.Json)
         setBody(opaData)
     }.body()
 
-    return response.result.allow
+    return response.result
 }
