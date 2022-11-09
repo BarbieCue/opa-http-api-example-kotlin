@@ -52,7 +52,6 @@ From the policy!
     ```sh
     cd opa
     opa build example-policy.rego
-    mkdir bundles
     mv bundle.tar.gz bundles
     ```
 
