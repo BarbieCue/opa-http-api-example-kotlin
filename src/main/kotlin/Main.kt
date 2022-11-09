@@ -18,7 +18,7 @@ import kotlinx.serialization.json.Json
 
 fun main() {
 
-    embeddedServer(Netty, port = 8080) {
+    embeddedServer(Netty, port = 5000) {
         install(Authentication) {
             basic("auth-basic") {
                 realm = "Access to the '/' path"

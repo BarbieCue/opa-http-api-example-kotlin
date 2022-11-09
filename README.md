@@ -16,10 +16,10 @@ restricting an HTTP API with OPA.
 
 ```
 allowed:
-curl --user alice:password localhost:8080/finance/salary/alice
+curl --user alice:password localhost:5000/finance/salary/alice
 
 forbidden:
-curl --user alice:password localhost:8080/finance/salary/charlie
+curl --user alice:password localhost:5000/finance/salary/charlie
 ```
 
 # What happens here?
