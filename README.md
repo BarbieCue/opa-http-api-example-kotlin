@@ -1,13 +1,19 @@
+<div style="text-align: center;">
+
 # Open Policy Agent HTTP API example
 
-This is a minimalistic example of 
-restricting an HTTP API with OPA.
+<a href="https://www.openpolicyagent.org/"><img src="docs/opa-logo.png" alt="Open Policy Agent" width="50" /></a>
+<a href="https://kotlinlang.org/"><img src="docs/kotlin-logo.png" alt="Kotlin" width="50" /></a>
 
+This is a minimalistic example of restricting an HTTP API with OPA
 
-## Run
+</div>
+
+## Get started
 
 1. Start the OPA server (+ bundle server)
     ```
+    cd opa
     docker-compose up
     ``` 
 2. Start the API server (kotlin application) e.g. in IntelliJ IDEA
