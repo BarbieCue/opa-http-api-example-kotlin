@@ -21,13 +21,11 @@ fun main() {
     embeddedServer(Netty, port = 5000) {
         install(Authentication) {
             basic("auth-basic") {
-                realm = "Access to the '/' path"
                 validate { credentials ->
                     UserIdPrincipal(credentials.name)
                 }
             }
         }
-
         routing {
             authenticate("auth-basic") {
                 get("{...}") {
@@ -38,7 +36,7 @@ fun main() {
                     val isAuthorized = checkPolicy(user, method, path)
 
                     if (isAuthorized)
-                        call.respondText("You are authorized! :)")
+                        call.respondText("${path.substringAfterLast("/")}s salary is ${(0..5000000).random()}€")
                     else
                         call.respond(HttpStatusCode.Unauthorized, "Nope!")
                 }
@@ -68,7 +66,6 @@ data class OpaResponse(
 private suspend fun checkPolicy(user: String?, method: String, path: String): Boolean {
     val client = HttpClient(CIO) {
         install(Logging) {
-            logger = Logger.DEFAULT
             level = LogLevel.ALL
         }
         install(ContentNegotiation) {
