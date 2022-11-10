@@ -28,15 +28,16 @@ fun main() {
         }
         routing {
             authenticate("auth-basic") {
-                get("{...}") {
+                get("finance/salary/{employee}") {
                     val user = call.principal<UserIdPrincipal>()?.name
                     val method = call.request.httpMethod.value
                     val path = call.request.path()
 
                     val isAuthorized = checkPolicy(user, method, path)
 
-                    if (isAuthorized)
-                        call.respondText("${path.substringAfterLast("/")}s salary is ${(0..5000000).random()}€")
+                    if (isAuthorized) {
+                        call.respondText("${call.parameters["employee"]}s salary is ${(0..5000000).random()}€")
+                    }
                     else
                         call.respond(HttpStatusCode.Unauthorized, "Nope!")
                 }
@@ -71,7 +72,6 @@ private suspend fun checkPolicy(user: String?, method: String, path: String): Bo
         install(ContentNegotiation) {
             json(Json {
                 prettyPrint = true
-                isLenient = true
                 ignoreUnknownKeys = true
             })
         }
