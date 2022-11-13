@@ -1,9 +1,9 @@
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -16,80 +16,76 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-suspend fun main() {
+fun main() {
 
-    embeddedServer(Netty, port = 8080) {
+    embeddedServer(Netty, port = 5000) {
         install(Authentication) {
             basic("auth-basic") {
-                realm = "Access to the '/' path"
                 validate { credentials ->
                     UserIdPrincipal(credentials.name)
                 }
             }
         }
-
         routing {
             authenticate("auth-basic") {
-                get("{...}") {
+                get("finance/salary/{employee}") {
                     val user = call.principal<UserIdPrincipal>()?.name
-                    println("user: $user")
                     val method = call.request.httpMethod.value
-                    println("method: $method")
                     val path = call.request.path()
-                    println("path: $path")
-                    val token = call.request.queryParameters.get("token")
-                    println("token: $token")
 
-                    val authenticated = checkPolicy(user, method, path, token)
+                    val isAuthorized = checkPolicy(user, method, path)
 
-                    call.respondText("Hello, world!")
+                    if (isAuthorized) {
+                        call.respondText("${call.parameters["employee"]}s salary is ${(0..5000000).random()}€")
+                    }
+                    else
+                        call.respond(HttpStatusCode.Unauthorized, "Nope!")
                 }
             }
         }
     }.start(wait = true)
 }
 
+// Input JSON for OPA request
 @Serializable
 data class OpaRequestBody(
     val input: Input
 )
-
 @Serializable
 data class Input(
     val user: String?,
     val method: String,
     val path: List<String>,
-    val token: String?,
 )
 
-suspend fun checkPolicy(user: String?, method: String, path: String, token: String?): String {
-    val opaData = OpaRequestBody(Input(user, method, path.removePrefix("/").split("/"), token))
+// OPA response JSON (stripped)
+@Serializable
+data class OpaResponse(
+    val result: Boolean
+)
 
-    // "/httpapi/auth_example" comes from the example-policy.rego file
-    // https://www.openpolicyagent.org/docs/latest/policy-language/
-    val opaUrl = "http://localhost:8181/v1/data/httpapi/auth_example"
-
+private suspend fun checkPolicy(user: String?, method: String, path: String): Boolean {
     val client = HttpClient(CIO) {
         install(Logging) {
-            logger = Logger.DEFAULT
             level = LogLevel.ALL
         }
         install(ContentNegotiation) {
             json(Json {
                 prettyPrint = true
-                isLenient = true
+                ignoreUnknownKeys = true
             })
         }
     }
 
-    val response = client.post(opaUrl) {
+    val opaData = OpaRequestBody(Input(user, method, path.removePrefix("/").split("/")))
+
+    // Call the OPA Data API
+    // Concrete: Retrieving the "allow" document from the example-policy by entering values
+    // https://www.openpolicyagent.org/docs/latest/rest-api/#get-a-document-with-input
+    val response: OpaResponse = client.post("http://localhost:8181/v1/data/httpapi/auth_example/allow") {
         contentType(ContentType.Application.Json)
         setBody(opaData)
-    }
+    }.body()
 
-    if (response.status.value >= 300) {
-        throw Exception("Error checking auth! status: ${response.status} and message: ${response.bodyAsText()}")
-    }
-
-    return response.bodyAsText()
+    return response.result
 }
