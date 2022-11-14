@@ -18,7 +18,7 @@ A minimalistic example of restricting an HTTP API with OPA
    ```
 2. Start the OPA server (+ bundle server)
     ```
-    `docker compose -f opa/docker-compose.yml up`
+    docker compose -f opa/docker-compose.yml up
     ```  
 
 
