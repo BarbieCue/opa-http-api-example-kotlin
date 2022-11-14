@@ -12,15 +12,14 @@ A minimalistic example of restricting an HTTP API with OPA
 
 ## Get started
 
-1. Start the OPA server (+ bundle server)
-    ```
-    cd opa
-    docker-compose up
-    ``` 
-2. Start the API server (kotlin application)
+1. Start the API server (kotlin application)
    ```
    ./gradlew run
-   ``` 
+   ```
+2. Start the OPA server (+ bundle server)
+    ```
+    `docker compose -f opa/docker-compose.yml up`
+    ```  
 
 
 ### Being the client - sample requests to the API server
