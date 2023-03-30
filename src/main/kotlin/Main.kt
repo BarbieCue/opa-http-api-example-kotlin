@@ -17,33 +17,33 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 fun main() {
+    embeddedServer(Netty, port = 5000, module = Application::opaExample).start(wait = true)
+}
 
-    embeddedServer(Netty, port = 5000) {
-        install(Authentication) {
-            basic("auth-basic") {
-                validate { credentials ->
-                    UserIdPrincipal(credentials.name)
-                }
+fun Application.opaExample() {
+    install(Authentication) {
+        basic("auth-basic") {
+            validate { credentials ->
+                UserIdPrincipal(credentials.name)
             }
         }
-        routing {
-            authenticate("auth-basic") {
-                get("finance/salary/{employee}") {
-                    val user = call.principal<UserIdPrincipal>()?.name
-                    val method = call.request.httpMethod.value
-                    val path = call.request.path()
+    }
+    routing {
+        authenticate("auth-basic") {
+            get("finance/salary/{employee}") {
+                val user = call.principal<UserIdPrincipal>()?.name
+                val method = call.request.httpMethod.value
+                val path = call.request.path()
 
-                    val isAuthorized = checkPolicy(user, method, path)
+                val isAuthorized = checkPolicy(user, method, path)
 
-                    if (isAuthorized) {
-                        call.respondText("${call.parameters["employee"]}s salary is ${(0..5000000).random()}€")
-                    }
-                    else
-                        call.respond(HttpStatusCode.Unauthorized, "Nope!")
-                }
+                if (isAuthorized) {
+                    call.respondText("${call.parameters["employee"]}s salary is ${(0..5000000).random()}€")
+                } else
+                    call.respond(HttpStatusCode.Unauthorized, "Nope!")
             }
         }
-    }.start(wait = true)
+    }
 }
 
 // Input JSON for OPA request
