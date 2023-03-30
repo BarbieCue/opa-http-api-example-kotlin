@@ -28,7 +28,7 @@ dependencies {
 
     // Other
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-    implementation("ch.qos.logback:logback-classic:1.4.4")
+    implementation("ch.qos.logback:logback-classic:1.4.6")
 }
 
 tasks.withType<KotlinCompile> {
