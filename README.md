@@ -12,23 +12,25 @@ A minimalistic example of restricting an HTTP API with OPA
 
 ## Get started
 
-1. Start the API server (kotlin application)
-   ```
-   ./gradlew run
-   ```
-2. Start the OPA server (+ bundle server)
-    ```
-    docker compose -f opa/docker-compose.yml up
-    ```  
-
-
-### Being the client - sample requests to the API server
-
+### 1. Start the API server (kotlin application)
+```shell
+./gradlew run
 ```
-allowed:
-curl --user alice:password localhost:5000/finance/salary/alice
 
-forbidden:
+### 2. Start the OPA server (+ bundle server)
+ ```shell
+ docker compose -f opa/docker-compose.yml up
+ ```
+
+### 3. Be the client - sample requests to the API server
+
+_Allowed_
+```shell
+curl --user alice:password localhost:5000/finance/salary/alice
+```
+
+_Forbidden_
+```shell
 curl --user alice:password localhost:5000/finance/salary/charlie
 ```
 
@@ -60,7 +62,7 @@ From the policy!
 1. Make changes to the policy file
 2. [Download and install](https://www.openpolicyagent.org/docs/v0.11.0/get-started/) the Open Policy Agent. *Tip: drop the opa executable to ~/.local/bin, so it is on the PATH.*
 3. Build the policy and move the resulting bundle to the correct folder so that it can be collected by the bundle server
-    ```sh
+    ```shell
     cd opa
     opa build example-policy.rego
     mv bundle.tar.gz bundles
