@@ -40,9 +40,9 @@ curl --user alice:password localhost:5000/finance/salary/charlie
 
 On each HTTP request from a client to the API server, 
 the API server asks the OPA server whether the requesting client
-is authorized to perform this action.
+is authorized to perform this action or not.
 Depending on the answer of OPA, 
-the clients request will be processed or rejected.  
+the client request will be processed or rejected.  
 
 
 ## Policy / Bundle
